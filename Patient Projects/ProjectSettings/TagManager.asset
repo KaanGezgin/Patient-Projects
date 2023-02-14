@@ -3,15 +3,22 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Defense
+  - PlayersTag
+  - OpponentTag
+  - Card Clone
+  - Original
+  - Plane
+  - Planet Info
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - GroundLayer
   - Water
   - UI
-  - 
+  - Plane
   - 
   - 
   - 
