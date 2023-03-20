@@ -12,11 +12,10 @@ public class Sliding : MonoBehaviour
 
     [Header("Sliding")]
     private float slideTimer;
-    private float startYScale;
-    public float maxSliderTime;
     public float slideForce;
+    public float maxSliderTime;
+    private float startYScale;
     public float slideYScale;
-    private bool sliding;
 
     [Header("Inputs")]
     public KeyCode slide = KeyCode.LeftControl;
@@ -30,7 +29,7 @@ public class Sliding : MonoBehaviour
         startYScale = playerTransform.localScale.y;
 
     }
-    public void Update()
+    private void Update()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -39,31 +38,29 @@ public class Sliding : MonoBehaviour
         {
             StartSliding();
         }
-        if(Input.GetKeyUp(slide) && sliding)
+        if(Input.GetKeyUp(slide) && playerMovement.sliding)
         {
             EndSliding();
         }
     }
     public void FixedUpdate()
     {
-        if (sliding)
+        if (playerMovement.sliding)
         {
             SlideMovement();
         }
     }
     private void StartSliding()
     {
-        sliding = true;
+        playerMovement.sliding = true;
         playerTransform.localScale = new Vector3(playerTransform.localScale.x, slideYScale, playerTransform.localScale.z);
-        playerBody.AddForce(Vector3.down * 5f, ForceMode.Force);
+        playerBody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         slideTimer = maxSliderTime;
     }
     private void EndSliding()
     {
-        sliding = false;
-
+        playerMovement.sliding = false;
         playerTransform.localScale = new Vector3(playerTransform.localScale.x, startYScale, playerTransform.localScale.z);
-
     }
     private void SlideMovement()
     {
@@ -71,15 +68,13 @@ public class Sliding : MonoBehaviour
 
         if (!playerMovement.OnSlope() || playerBody.velocity.y > -0.1f)
         {
-            playerBody.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
             slideTimer -= Time.deltaTime;
+            playerBody.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
         }
-
         else
         {
             playerBody.AddForce(playerMovement.SlopeMoveDirection(inputDirection) * slideForce, ForceMode.Force);
         }
-
         if (slideTimer <= 0)
         {
             EndSliding();

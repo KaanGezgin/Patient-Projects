@@ -9,13 +9,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform playerTransform;
 
     [Header("Movement")]
-    Vector3 moveDirection;
     [SerializeField] float groundDrag;
     [SerializeField] Transform visor;
+    Vector3 moveDirection;
+
     private float moveSpeed;
     [SerializeField] float walkSpeed;
     [SerializeField] float sprintSpeed;
+    [SerializeField] float slideSpeed;
+    [SerializeField] float climbSpeed;
     bool walkControl;
+    bool climbing;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    public bool sliding;
+    public float speedIncreaseMultiplier;
+    public float slopeIncreaseMultiplier;
 
     [Header("Crouching")]
     [SerializeField] float crouchSpeed;
@@ -32,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     [SerializeField] float playerHeight;
     [SerializeField] LayerMask isGround;
-    [SerializeField] private bool grounded;
+    public bool grounded;
 
     [Header("States")]
     [SerializeField] MovementState movementStates;
@@ -40,9 +50,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Slope Handling")]
     [SerializeField] RaycastHit slopeControlHit;
     public float sloopAngle;
-
-
-
 
     [Header("Inputs")]
     float horizontalInput;
@@ -57,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
         walking,
         spriting,
         crouch,
+        sliding,
+        climbing,
         air
     }
     private void Start()
@@ -66,17 +75,17 @@ public class PlayerMovement : MonoBehaviour
         jumpReady = true;
         startYScale = playerTransform.localScale.y;
         walkControl = true;
-    
+        sliding = true;
     }
     private void Update()
     {
         PlayerInputs();
         GroundCheck();
         SpeedControl();
+        StateHandler();
     }
     private void FixedUpdate()
     {
-        StateHandler();
         Movement();
     }
     private void GroundCheck()
@@ -111,35 +120,90 @@ public class PlayerMovement : MonoBehaviour
             playerTransform.localScale = new Vector3(playerTransform.localScale.x, startYScale, playerTransform.localScale.z);
 
         }
-
-        
+        if (Input.GetKey(jump) && jumpReady && grounded)
+        {
+            jumpReady = false;
+            Jump();
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
     }
     private void StateHandler()
     {
         walkControl = true;
 
-        if (Input.GetKey(crouch))
+
+        if (sliding)
+        {
+            movementStates = MovementState.sliding;
+            if (OnSlope() && playerBody.velocity.y < 0.1f)
+            {
+                desiredMoveSpeed = slideSpeed;
+            }
+            else
+            {
+                desiredMoveSpeed = sprintSpeed;
+            }
+        }
+        else if (Input.GetKey(crouch))
         {
             movementStates = MovementState.crouch;
-            moveSpeed = crouchSpeed;
+            desiredMoveSpeed = crouchSpeed;
             walkControl = false;
-
         }
-        if (grounded == true && Input.GetKey(sprint))
+        else if (grounded == true && Input.GetKey(sprint))
         {
             movementStates = MovementState.spriting;
-            moveSpeed = sprintSpeed;
+            desiredMoveSpeed = sprintSpeed;
             walkControl = false;
         }
-        if (grounded == true && walkControl == true)
+        else if (grounded == true && walkControl == true)
         {
             movementStates = MovementState.walking;
-            moveSpeed = walkSpeed;
+            desiredMoveSpeed = walkSpeed;
         }
-        if(grounded == false)
+        else if (grounded == false)
         {
             movementStates = MovementState.air;
         }
+
+        if(Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SmoothLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+    }
+
+    private IEnumerator SmoothLerpMoveSpeed()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+        float slopeAngle;
+        float slopeAngleIncrease;
+
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            if (OnSlope())
+            {
+                slopeAngle = Vector3.Angle(Vector3.up, slopeControlHit.normal);
+                slopeAngleIncrease = 1 + (slopeAngle / 90f);
+                time += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * slopeAngleIncrease;
+            }
+            else
+            {
+                time += Time.deltaTime * speedIncreaseMultiplier;
+            }
+            yield return null;
+        }
+        moveSpeed = desiredMoveSpeed;
     }
     private void Movement()
     {
@@ -154,9 +218,7 @@ public class PlayerMovement : MonoBehaviour
                 playerBody.AddForce(Vector3.down * 80f, ForceMode.Force);
             }
         }
-        playerBody.useGravity = !OnSlope();
-
-        if (grounded == true)
+       else if (grounded == true)
         {
             playerBody.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         }
@@ -164,12 +226,7 @@ public class PlayerMovement : MonoBehaviour
         {
             playerBody.AddForce(moveDirection.normalized * moveSpeed * 10f * airFriction, ForceMode.Force);
         }
-        if (Input.GetKey(jump) && jumpReady && grounded)
-        {
-            jumpReady = false;
-            Jump();
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+        playerBody.useGravity = !OnSlope();
     }
     private void SpeedControl()
     {
@@ -219,7 +276,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector3 SlopeMoveDirection(Vector3 direction)
     {
-        return Vector3.ProjectOnPlane(direction, slopeControlHit.normal).normalized;
+        return Vector3.ProjectOnPlane(moveDirection, slopeControlHit.normal).normalized;
     }
   
 }
