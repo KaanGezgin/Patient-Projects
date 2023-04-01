@@ -18,8 +18,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float sprintSpeed;
     [SerializeField] float slideSpeed;
     [SerializeField] float climbSpeed;
+    [SerializeField] float wallrunSpeed;
     bool walkControl;
-    bool climbing;
+    public bool climbing;
+    public bool wallRunning;
 
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -65,9 +67,66 @@ public class PlayerMovement : MonoBehaviour
         spriting,
         crouch,
         sliding,
+        wallrun,
         climbing,
         air
     }
+    private void StateHandler()
+    {
+        walkControl = true;
+
+        if (wallRunning)
+        {
+            movementStates = MovementState.wallrun;
+            desiredMoveSpeed = wallrunSpeed;
+        }
+
+        if (sliding)
+        {
+            movementStates = MovementState.sliding;
+            if (OnSlope() && playerBody.velocity.y < 0.1f)
+            {
+                desiredMoveSpeed = slideSpeed;
+            }
+            else
+            {
+                desiredMoveSpeed = sprintSpeed;
+            }
+        }
+        else if (Input.GetKey(crouch))
+        {
+            movementStates = MovementState.crouch;
+            desiredMoveSpeed = crouchSpeed;
+            walkControl = false;
+        }
+        else if (grounded == true && Input.GetKey(sprint))
+        {
+            movementStates = MovementState.spriting;
+            desiredMoveSpeed = sprintSpeed;
+            walkControl = false;
+        }
+        else if (grounded == true && walkControl == true)
+        {
+            movementStates = MovementState.walking;
+            desiredMoveSpeed = walkSpeed;
+        }
+        else if (grounded == false)
+        {
+            movementStates = MovementState.air;
+        }
+
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SmoothLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+    }
+
     private void Start()
     {
         playerBody = GetComponent<Rigidbody>();
@@ -127,57 +186,7 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
-    private void StateHandler()
-    {
-        walkControl = true;
-
-
-        if (sliding)
-        {
-            movementStates = MovementState.sliding;
-            if (OnSlope() && playerBody.velocity.y < 0.1f)
-            {
-                desiredMoveSpeed = slideSpeed;
-            }
-            else
-            {
-                desiredMoveSpeed = sprintSpeed;
-            }
-        }
-        else if (Input.GetKey(crouch))
-        {
-            movementStates = MovementState.crouch;
-            desiredMoveSpeed = crouchSpeed;
-            walkControl = false;
-        }
-        else if (grounded == true && Input.GetKey(sprint))
-        {
-            movementStates = MovementState.spriting;
-            desiredMoveSpeed = sprintSpeed;
-            walkControl = false;
-        }
-        else if (grounded == true && walkControl == true)
-        {
-            movementStates = MovementState.walking;
-            desiredMoveSpeed = walkSpeed;
-        }
-        else if (grounded == false)
-        {
-            movementStates = MovementState.air;
-        }
-
-        if(Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
-        {
-            StopAllCoroutines();
-            StartCoroutine(SmoothLerpMoveSpeed());
-        }
-        else
-        {
-            moveSpeed = desiredMoveSpeed;
-        }
-        lastDesiredMoveSpeed = desiredMoveSpeed;
-    }
-
+    
     private IEnumerator SmoothLerpMoveSpeed()
     {
         float time = 0;
