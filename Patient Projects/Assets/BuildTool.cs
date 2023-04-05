@@ -66,44 +66,61 @@ public class BuildTool : MonoBehaviour
         else
         {
             _spawnedBuilging.UpdateMaterail(buildingMatPositive);
-            _spawnedBuilging.transform.position = hitInfo.point;
-        }
+            //_spawnedBuilging.transform.position = hitInfo.point; Gridless building
+            var gridPosition = WorldGrid.GridPositionFromWorld(hitInfo.point, 1f);
+            _spawnedBuilging.transform.position = gridPosition;
 
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                Building placeBuilding = Instantiate(_spawnedBuilging, gridPosition, Quaternion.identity);
+                placeBuilding.PlaceBuilding();
+            }
+        }
+        /* Gridless building 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Building placeBuilding = Instantiate(_spawnedBuilging, hitInfo.point, Quaternion.identity);
             placeBuilding.PlaceBuilding();
         }
+        */
     }
     private void DeleteMode()
     {
-        if(!IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo))
+        if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo))
         {
-            return;
-        }
-        var detectedBuiding = hitInfo.collider.gameObject.GetComponentInParent<Building>();
 
-        if(detectedBuiding == null)
-        {
-            return;
+            var detectedBuiding = hitInfo.collider.gameObject.GetComponentInParent<Building>();
+
+            if (detectedBuiding == null)
+            {
+                return;
+            }
+            if (targetBuilding == null)
+            {
+                targetBuilding = detectedBuiding;
+            }
+            if (detectedBuiding != targetBuilding && targetBuilding.FlaggedForDelete)
+            {
+                targetBuilding.RemoveFlag();
+                targetBuilding = detectedBuiding;
+            }
+            if (detectedBuiding == targetBuilding && !targetBuilding.FlaggedForDelete)
+            {
+                targetBuilding.FlagForDelete(buildingMatNegative);
+            }
+            if (Input.GetKey(KeyCode.Mouse1))
+            {
+                Destroy(targetBuilding.gameObject);
+                targetBuilding = null;
+            }
         }
-        if(targetBuilding == null)
+        else
         {
-            targetBuilding = detectedBuiding;
-        }
-        if(detectedBuiding != targetBuilding && targetBuilding.FlaggedForDelete)
-        {
-            targetBuilding.RemoveFlag();
-            targetBuilding = detectedBuiding;
-        }
-        if(detectedBuiding == targetBuilding && !targetBuilding.FlaggedForDelete)
-        {
-            targetBuilding.FlagForDelete(buildingMatNegative);
-        }
-        if (Input.GetKey(KeyCode.Mouse1))
-        {
-            Destroy(targetBuilding.gameObject);
-            targetBuilding = null;
+            if(targetBuilding != null && targetBuilding.FlaggedForDelete)
+            {
+                targetBuilding.RemoveFlag();
+                targetBuilding = null;
+            }
         }
     }
 }
