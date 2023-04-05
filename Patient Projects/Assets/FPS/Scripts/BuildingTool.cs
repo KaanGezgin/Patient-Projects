@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BuildingTool : MonoBehaviour
 {
-    public BaseManagment buildingLocation;
+    public GameObject buildingLocation;
     [SerializeField] private float toolRayDistance;
     [SerializeField] private LayerMask buildableLayer;
     [SerializeField] private LayerMask buildsLayer;
@@ -13,9 +13,12 @@ public class BuildingTool : MonoBehaviour
     [SerializeField] private Material buildingMaterial;
     [SerializeField] private Material deletingMaterial;
 
+    private Material destroyMaterial;
 
+    private bool destroyFlag;
     private bool deleteMode;
     private Camera mainCamera;
+
     private void Start()
     {
         mainCamera = Camera.main;
@@ -48,18 +51,17 @@ public class BuildingTool : MonoBehaviour
     {
         if (!isHittingSomething(buildableLayer, out RaycastHit hitInfo))
         {
-            buildingLocation.UpdateMaterial(buildingMaterial);
+            //UpdateMaterial(buildingMaterial);
         }
         else
         {
-            buildingLocation.UpdateMaterial(deletingMaterial);
+            //UpdateMaterial(deletingMaterial);
             buildingLocation.transform.position = hitInfo.point;
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            BaseManagment placedBuildings = Instantiate(buildingLocation, hitInfo.point, Quaternion.identity);
-            placedBuildings.PlaceBuildings();
+            buildingLocation = Instantiate(buildingLocation, hitInfo.point, Quaternion.identity);
         }
     }
     private void DestroyBuildings()
@@ -82,4 +84,23 @@ public class BuildingTool : MonoBehaviour
         Ray ray = new Ray(rayOrigin.position, mainCamera.transform.forward * toolRayDistance);
         return Physics.Raycast(ray, out hitInfo, toolRayDistance, layermask);
     }
+    
+    /*
+    public void UpdateMaterial(Material replacedMaterial)
+    {
+        if (materialControl.material != replacedMaterial)
+        {
+            materialControl.material = replacedMaterial;
+        }
+    }
+    
+    public void FlagForDeletingBuilding(Material desMaterial)
+    {
+        //UpdateMaterial(desMaterial);
+        destroyFlag = true;
+    }
+    public void RemoveDeletFlag()
+    {
+        destroyFlag = false;
+    }*/
 }
