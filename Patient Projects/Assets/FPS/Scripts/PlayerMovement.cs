@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] float groundDrag;
-    [SerializeField] Transform visor;
+    [SerializeField] Transform face;
     Vector3 moveDirection;
 
     private float moveSpeed;
@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     bool walkControl;
     public bool climbing;
     public bool wallRunning;
+    public bool crouching;
 
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -56,10 +57,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Inputs")]
     float horizontalInput;
     float verticalInput;
-    public KeyCode jump;
-    public KeyCode sprint;
-    public KeyCode crouch;
-    public KeyCode slide;
+    public KeyCode jump = KeyCode.Space;
+    public KeyCode sprint = KeyCode.LeftShift;
+    public KeyCode crouch = KeyCode.C;
+    public KeyCode slide = KeyCode.LeftControl;
 
     public enum MovementState
     {
@@ -68,12 +69,31 @@ public class PlayerMovement : MonoBehaviour
         crouch,
         sliding,
         wallrun,
-        climbing,
         air
     }
+  
+    private void Start()
+    {
+        playerBody = GetComponent<Rigidbody>();
+        playerBody.freezeRotation = true;
+        jumpReady = true;
+        startYScale = playerTransform.localScale.y;
+    }
+    private void Update()
+    {
+        PlayerInputs();
+        GroundCheck();
+        SpeedControl();
+        StateHandler();
+    }
+    private void FixedUpdate()
+    {
+        Movement();
+    }
+
     private void StateHandler()
     {
-        walkControl = true;
+        //walkControl = true;
 
         if (wallRunning)
         {
@@ -81,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
             desiredMoveSpeed = wallrunSpeed;
         }
 
-        if (sliding)
+        else if (sliding)
         {
             movementStates = MovementState.sliding;
             if (OnSlope() && playerBody.velocity.y < 0.1f)
@@ -93,19 +113,17 @@ public class PlayerMovement : MonoBehaviour
                 desiredMoveSpeed = sprintSpeed;
             }
         }
-        else if (Input.GetKey(crouch))
+        else if (crouching)
         {
             movementStates = MovementState.crouch;
             desiredMoveSpeed = crouchSpeed;
-            walkControl = false;
         }
         else if (grounded == true && Input.GetKey(sprint))
         {
             movementStates = MovementState.spriting;
             desiredMoveSpeed = sprintSpeed;
-            walkControl = false;
         }
-        else if (grounded == true && walkControl == true)
+        else if (grounded == true)
         {
             movementStates = MovementState.walking;
             desiredMoveSpeed = walkSpeed;
@@ -127,26 +145,6 @@ public class PlayerMovement : MonoBehaviour
         lastDesiredMoveSpeed = desiredMoveSpeed;
     }
 
-    private void Start()
-    {
-        playerBody = GetComponent<Rigidbody>();
-        playerBody.freezeRotation = true;
-        jumpReady = true;
-        startYScale = playerTransform.localScale.y;
-        walkControl = true;
-        sliding = true;
-    }
-    private void Update()
-    {
-        PlayerInputs();
-        GroundCheck();
-        SpeedControl();
-        StateHandler();
-    }
-    private void FixedUpdate()
-    {
-        Movement();
-    }
     private void GroundCheck()
     {
         grounded = Physics.Raycast(playerTransform.position, Vector3.down, playerHeight * 0.5f + 0.2f, isGround);
@@ -164,26 +162,28 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        jump = KeyCode.Space;
-        sprint = KeyCode.LeftShift;
-        crouch = KeyCode.C;
-        slide = KeyCode.LeftControl;
 
-        if (Input.GetKeyDown(crouch))
+        if (Input.GetKeyDown(crouch) && horizontalInput == 0 && verticalInput == 0)
         {
             playerTransform.localScale = new Vector3(playerTransform.localScale.x, crouchYScale, playerTransform.localScale.z);
             playerBody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+
+            crouching = true;
         }
         if (Input.GetKeyUp(crouch))
         {
             playerTransform.localScale = new Vector3(playerTransform.localScale.x, startYScale, playerTransform.localScale.z);
-
+            crouching = false;
         }
         if (Input.GetKey(jump) && jumpReady && grounded)
         {
             jumpReady = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
+        }
+        if(wallRunning == false)
+        {
+            playerBody.useGravity = !OnSlope();
         }
     }
     
@@ -216,7 +216,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Movement()
     {
-        moveDirection = visor.forward * verticalInput + visor.right * horizontalInput;
+        moveDirection = face.forward * verticalInput + face.right * horizontalInput;
 
         if (OnSlope() && !onSlopeJump)
         {
@@ -235,7 +235,8 @@ public class PlayerMovement : MonoBehaviour
         {
             playerBody.AddForce(moveDirection.normalized * moveSpeed * 10f * airFriction, ForceMode.Force);
         }
-        playerBody.useGravity = !OnSlope();
+        //playerBody.useGravity = !OnSlope();
+
     }
     private void SpeedControl()
     {
@@ -285,7 +286,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector3 SlopeMoveDirection(Vector3 direction)
     {
-        return Vector3.ProjectOnPlane(moveDirection, slopeControlHit.normal).normalized;
+        return Vector3.ProjectOnPlane(direction, slopeControlHit.normal).normalized;
     }
   
 }

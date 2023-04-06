@@ -5,7 +5,7 @@ using UnityEngine;
 public class Sliding : MonoBehaviour
 {
     [Header("References")]
-    public Transform visor;
+    public Transform face;
     public Transform playerTransform;
     private Rigidbody playerBody;
     private PlayerMovement playerMovement;
@@ -64,7 +64,7 @@ public class Sliding : MonoBehaviour
     }
     private void SlideMovement()
     {
-        Vector3 inputDirection = visor.forward * verticalInput + visor.right * horizontalInput;
+        Vector3 inputDirection = face.forward * verticalInput + face.right * horizontalInput;
 
         if (!playerMovement.OnSlope() || playerBody.velocity.y > -0.1f)
         {
@@ -81,4 +81,5 @@ public class Sliding : MonoBehaviour
         }
 
     }
+
 }

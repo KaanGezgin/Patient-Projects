@@ -6,14 +6,14 @@ public class CameraControls : MonoBehaviour
 {
     [Header("Player Attributes")]
     [SerializeField] Transform cameraTransform;
-    [SerializeField] Transform visor;
+    [SerializeField] Transform face;
 
 
     [Header("Mouse Inputs")]
     private float mouseX;
     private float mouseY;
 
-    [Header("")]
+    [Header("Mouse sensitivitys")]
     [SerializeField] private float xAxisSensivity;
     [SerializeField] private float yAxisSensivity;
     private float xAxisRotation;
@@ -35,7 +35,7 @@ public class CameraControls : MonoBehaviour
         xAxisRotation = Mathf.Clamp(xAxisRotation, -90f, 90f);
 
         cameraTransform.rotation = Quaternion.Euler(xAxisRotation, yAxisRotation, 0);
-        visor.rotation = Quaternion.Euler(0, yAxisRotation, 0);
+        face.rotation = Quaternion.Euler(0, yAxisRotation, 0);
 
     }
 
