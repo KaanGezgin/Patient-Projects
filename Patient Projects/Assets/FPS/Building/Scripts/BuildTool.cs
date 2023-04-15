@@ -7,7 +7,7 @@ public class BuildTool : MonoBehaviour
     [SerializeField] private float rayDistance;
     [SerializeField] private LayerMask buildModeLayerMask;
     [SerializeField] private LayerMask deleteModeLayerMask;
-    [SerializeField] private int defaultLayerInt = 8;
+    [SerializeField] private int defaultLayerInt = 11;
     [SerializeField] private Transform rayOrigin;
     [SerializeField] private Material buildingMatPositive;
     [SerializeField] private Material buildingMatNegative;
@@ -19,11 +19,41 @@ public class BuildTool : MonoBehaviour
     private Building targetBuilding;
     private Quaternion placedBuildingsLastRotation;
 
+    public BuildingsData tempData;
 
     private void Start()
     {
         mainCamera = Camera.main;
+        ChooseBuilding(tempData);
     }
+
+    private void ChooseBuilding(BuildingsData data)
+    {
+        if (deleteModeEnable)
+        {
+            if(targetBuilding != null && targetBuilding.FlaggedForDelete)
+            {
+                targetBuilding.RemoveFlag();
+            }
+            targetBuilding = null;
+            deleteModeEnable = false;
+        }
+        if(spawnedBuilging != null)
+        {
+            Destroy(spawnedBuilging.gameObject);
+            spawnedBuilging = null;
+        }
+        var newBuildingGameObject = new GameObject
+        {
+            layer = defaultLayerInt,
+            name = "Build Preview"
+        };
+
+        spawnedBuilging = newBuildingGameObject.AddComponent<Building>();
+        spawnedBuilging.Init(data);
+        spawnedBuilging.transform.rotation = placedBuildingsLastRotation;
+    }
+
     private void Update()
     {
         if (spawnedBuilging is null || !IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
@@ -63,38 +93,32 @@ public class BuildTool : MonoBehaviour
         {
             return;
         }
+        BuildModePreview();
+    }
+
+    private void BuildModePreview()
+    {
+        spawnedBuilging.UpdateMaterail(spawnedBuilging.IsOverLapping ? buildingMatNegative : buildingMatPositive);
         if (Input.GetKeyDown(KeyCode.R))
         {
             spawnedBuilging.transform.Rotate(0, 90, 0);
             placedBuildingsLastRotation = spawnedBuilging.transform.rotation;
         }
-
-        if (!IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
+        if (IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
         {
-            spawnedBuilging.UpdateMaterail(buildingMatNegative);
-        }
-        else
-        {
-            spawnedBuilging.UpdateMaterail(buildingMatPositive);
             spawnedBuilging.transform.position = hitInfo.point;
             var gridPosition = WorldGrid.GridPositionFromWorld(hitInfo.point, 1f);
-            //spawnedBuilging.transform.position = gridPosition; Grid building
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && !spawnedBuilging.IsOverLapping)
             {
-                Building placeBuilding = Instantiate(spawnedBuilging, hitInfo.point, placedBuildingsLastRotation);
-                placeBuilding.PlaceBuilding();
+                spawnedBuilging.PlaceBuilding();
+                var buildingDataCopy = spawnedBuilging.BuildingData;
+                spawnedBuilging = null;
+                ChooseBuilding(buildingDataCopy);
             }
         }
-        /* Grid building 
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                Building placeBuilding = Instantiate(spawnedBuilging, gridPosition, Quaternion.identity);
-                placeBuilding.PlaceBuilding();
-            }
-        */
     }
+
     private void DeleteMode()
     {
         if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
