@@ -15,17 +15,25 @@ public class BuildTool : MonoBehaviour
     private bool deleteModeEnable;
     private Camera mainCamera;
     
-    [SerializeField] private Building spawnedBuilging;
+    private Building spawnedBuilging;
     private Building targetBuilding;
     private Quaternion placedBuildingsLastRotation;
 
-    public BuildingsData tempData;
+
 
     private void Start()
     {
         mainCamera = Camera.main;
-        ChooseBuilding(tempData);
     }
+    private void OnEnable()
+    {
+        BuildPanelUI.ChosenBuilding += ChooseBuilding;
+    }
+    private void OnDisable()
+    {
+        BuildPanelUI.ChosenBuilding -= ChooseBuilding;
+    }
+
 
     private void ChooseBuilding(BuildingsData data)
     {
@@ -38,11 +46,7 @@ public class BuildTool : MonoBehaviour
             targetBuilding = null;
             deleteModeEnable = false;
         }
-        if(spawnedBuilging != null)
-        {
-            Destroy(spawnedBuilging.gameObject);
-            spawnedBuilging = null;
-        }
+        DeleteObjectInPreview();
         var newBuildingGameObject = new GameObject
         {
             layer = defaultLayerInt,
@@ -56,12 +60,17 @@ public class BuildTool : MonoBehaviour
 
     private void Update()
     {
+        if(spawnedBuilging && Input.GetKeyDown(KeyCode.Escape))
+        {
+            DeleteObjectInPreview();
+        }
         if (spawnedBuilging is null || !IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
         {
             return;
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            DeleteObjectInPreview();
             deleteModeEnable = !deleteModeEnable;
         }
         if (deleteModeEnable)
@@ -74,7 +83,14 @@ public class BuildTool : MonoBehaviour
         }
        
     }
-
+    private void DeleteObjectInPreview()
+    {
+        if (spawnedBuilging != null)
+        {
+            Destroy(spawnedBuilging.gameObject);
+            spawnedBuilging = null;
+        }
+    }
     private bool IsRayHittingSomething(LayerMask layerMask, out RaycastHit hitInfo, Vector3 rayPosition)
     {
         var ray = new Ray(rayPosition, mainCamera.transform.forward);
