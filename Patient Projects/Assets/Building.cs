@@ -4,35 +4,35 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
-    private Renderer _renderer;
-    private Material _defaultMaterail;
+    private Renderer renderer;
+    private Material defaultMaterail;
     private bool flaggedforDelete;
     public bool FlaggedForDelete => flaggedforDelete;
 
     private void Start()
     {
-        _renderer = GetComponentInChildren<Renderer>();
-        if (_renderer)
+        renderer = GetComponentInChildren<Renderer>();
+        if (renderer)
         {
-            _defaultMaterail = _renderer.material;
+            defaultMaterail = renderer.material;
         }
     }
 
     public void UpdateMaterail(Material newMaterail)
     {
-        if(_renderer.material != newMaterail)
+        if(renderer.material != newMaterail)
         {
-            _renderer.material = newMaterail;
+            renderer.material = newMaterail;
         }
     }
     public void PlaceBuilding()
     {
-        _renderer = GetComponentInChildren<Renderer>();
-        if (_renderer)
+        renderer = GetComponentInChildren<Renderer>();
+        if (renderer)
         {
-            _defaultMaterail = _renderer.material;
+            defaultMaterail = renderer.material;
         }
-        UpdateMaterail(_defaultMaterail);
+        UpdateMaterail(defaultMaterail);
     }
     public void FlagForDelete(Material deleteMat)
     {
@@ -41,7 +41,7 @@ public class Building : MonoBehaviour
     }
     public void RemoveFlag()
     {
-        UpdateMaterail(_defaultMaterail);
+        UpdateMaterail(defaultMaterail);
         flaggedforDelete = false;
     }
 }

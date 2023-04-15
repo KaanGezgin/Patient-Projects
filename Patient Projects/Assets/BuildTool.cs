@@ -15,8 +15,9 @@ public class BuildTool : MonoBehaviour
     private bool deleteModeEnable;
     private Camera mainCamera;
     
-    [SerializeField] private Building _spawnedBuilging;
+    [SerializeField] private Building spawnedBuilging;
     private Building targetBuilding;
+    private Quaternion placedBuildingsLastRotation;
 
 
     private void Start()
@@ -25,6 +26,10 @@ public class BuildTool : MonoBehaviour
     }
     private void Update()
     {
+        if (spawnedBuilging is null || !IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             deleteModeEnable = !deleteModeEnable;
@@ -40,9 +45,9 @@ public class BuildTool : MonoBehaviour
        
     }
 
-    private bool IsRayHittingSomething(LayerMask layerMask, out RaycastHit hitInfo)
+    private bool IsRayHittingSomething(LayerMask layerMask, out RaycastHit hitInfo, Vector3 rayPosition)
     {
-        var ray = new Ray(rayOrigin.position, mainCamera.transform.forward * rayDistance);
+        var ray = new Ray(rayPosition, mainCamera.transform.forward);
         return Physics.Raycast(ray, out hitInfo, rayDistance, layerMask);
     }
 
@@ -54,39 +59,45 @@ public class BuildTool : MonoBehaviour
             targetBuilding = null;
         }
 
-        if(_spawnedBuilging is null)
+        if(spawnedBuilging == null)
         {
             return;
         }
-
-        if (!IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            _spawnedBuilging.UpdateMaterail(buildingMatNegative);
+            spawnedBuilging.transform.Rotate(0, 90, 0);
+            placedBuildingsLastRotation = spawnedBuilging.transform.rotation;
+        }
+
+        if (!IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
+        {
+            spawnedBuilging.UpdateMaterail(buildingMatNegative);
         }
         else
         {
-            _spawnedBuilging.UpdateMaterail(buildingMatPositive);
-            //_spawnedBuilging.transform.position = hitInfo.point; Gridless building
+            spawnedBuilging.UpdateMaterail(buildingMatPositive);
+            spawnedBuilging.transform.position = hitInfo.point;
             var gridPosition = WorldGrid.GridPositionFromWorld(hitInfo.point, 1f);
-            _spawnedBuilging.transform.position = gridPosition;
+            //spawnedBuilging.transform.position = gridPosition; Grid building
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                Building placeBuilding = Instantiate(_spawnedBuilging, gridPosition, Quaternion.identity);
+                Building placeBuilding = Instantiate(spawnedBuilging, hitInfo.point, placedBuildingsLastRotation);
                 placeBuilding.PlaceBuilding();
             }
         }
-        /* Gridless building 
+        /* Grid building 
+
         if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            Building placeBuilding = Instantiate(_spawnedBuilging, hitInfo.point, Quaternion.identity);
-            placeBuilding.PlaceBuilding();
-        }
+            {
+                Building placeBuilding = Instantiate(spawnedBuilging, gridPosition, Quaternion.identity);
+                placeBuilding.PlaceBuilding();
+            }
         */
     }
     private void DeleteMode()
     {
-        if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo))
+        if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
         {
 
             var detectedBuiding = hitInfo.collider.gameObject.GetComponentInParent<Building>();
