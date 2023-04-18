@@ -12,7 +12,7 @@ public class BuildTool : MonoBehaviour
     [SerializeField] private Material buildingMatPositive;
     [SerializeField] private Material buildingMatNegative;
 
-    private bool deleteModeEnable;
+    public bool deleteModeEnable;
     private Camera mainCamera;
     
     private Building spawnedBuilging;
@@ -60,17 +60,22 @@ public class BuildTool : MonoBehaviour
 
     private void Update()
     {
-        if(spawnedBuilging && Input.GetKeyDown(KeyCode.Escape))
-        {
-            DeleteObjectInPreview();
-        }
-        if (spawnedBuilging is null || !IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
-        {
-            return;
-        }
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            Debug.Log("heyo");
+
             DeleteObjectInPreview();
+            /*
+            if (deleteModeEnable == false)
+            {
+                deleteModeEnable = true;
+            }
+            else if (deleteModeEnable)
+            {
+                deleteModeEnable = false;
+
+            }
+            */
             deleteModeEnable = !deleteModeEnable;
         }
         if (deleteModeEnable)
@@ -81,6 +86,16 @@ public class BuildTool : MonoBehaviour
         {
             Build();
         }
+
+        if (spawnedBuilging && Input.GetKeyDown(KeyCode.Escape))
+        {
+            DeleteObjectInPreview();
+        }
+        if (spawnedBuilging is null || !IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo))
+        {
+            return;
+        }
+       
        
     }
     private void DeleteObjectInPreview()
@@ -91,9 +106,9 @@ public class BuildTool : MonoBehaviour
             spawnedBuilging = null;
         }
     }
-    private bool IsRayHittingSomething(LayerMask layerMask, out RaycastHit hitInfo, Vector3 rayPosition)
+    private bool IsRayHittingSomething(LayerMask layerMask, out RaycastHit hitInfo)
     {
-        var ray = new Ray(rayPosition, mainCamera.transform.forward);
+        var ray = new Ray(rayOrigin.position, mainCamera.transform.forward * rayDistance);
         return Physics.Raycast(ray, out hitInfo, rayDistance, layerMask);
     }
 
@@ -120,7 +135,7 @@ public class BuildTool : MonoBehaviour
             spawnedBuilging.transform.Rotate(0, 90, 0);
             placedBuildingsLastRotation = spawnedBuilging.transform.rotation;
         }
-        if (IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
+        if (IsRayHittingSomething(buildModeLayerMask, out RaycastHit hitInfo))
         {
             spawnedBuilging.transform.position = hitInfo.point;
             var gridPosition = WorldGrid.GridPositionFromWorld(hitInfo.point, 1f);
@@ -137,13 +152,13 @@ public class BuildTool : MonoBehaviour
 
     private void DeleteMode()
     {
-        if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo, mainCamera.transform.position))
+        if (IsRayHittingSomething(deleteModeLayerMask, out RaycastHit hitInfo))
         {
-
             var detectedBuiding = hitInfo.collider.gameObject.GetComponentInParent<Building>();
 
             if (detectedBuiding == null)
             {
+                Debug.Log("heyo");
                 return;
             }
             if (targetBuilding == null)
