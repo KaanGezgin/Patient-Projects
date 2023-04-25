@@ -11,6 +11,7 @@ TagManager:
   - Original
   - Plane
   - Planet Info
+  - Spaceship
   layers:
   - Default
   - TransparentFX

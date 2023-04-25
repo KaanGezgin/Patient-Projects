@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Spaceship")]
-    [SerializeField] Spaceship spaceship;
+    [SerializeField] FlyingTest spaceship;
 
     [Header("Follow components")]
     [SerializeField] Transform target;
@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
     {
         target = GameObject.Find("Look Target").GetComponent<Transform>();
         player = GameObject.Find("Spaceship").GetComponent<Transform>();
-        spaceship = GameObject.Find("Spaceship").GetComponent<Spaceship>();
+        spaceship = GameObject.Find("Spaceship").GetComponent<FlyingTest>();
     }
 
 

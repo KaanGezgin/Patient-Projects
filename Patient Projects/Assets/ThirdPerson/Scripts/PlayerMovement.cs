@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    /*
+    [Header("Spaceship")]
+    public FlyingTest spaceship;
+    public GameObject spaceshipObj;
+    */
     [Header("Player Attributes")]
     [SerializeField] Rigidbody playerBody;
     [SerializeField] Transform playerTransform;
@@ -61,6 +66,9 @@ public class PlayerMovement : MonoBehaviour
     public KeyCode sprint = KeyCode.LeftShift;
     public KeyCode crouch = KeyCode.C;
     public KeyCode slide = KeyCode.LeftControl;
+
+    [Header("Camera")]
+    private Camera mainCamera; 
 
     public enum MovementState
     {
