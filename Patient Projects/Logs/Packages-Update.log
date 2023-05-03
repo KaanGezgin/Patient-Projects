@@ -44,3 +44,31 @@ The following packages were updated:
   com.unity.collab-proxy from version 1.13.5 to 1.17.2
   com.unity.timeline from version 1.6.2 to 1.6.4
   com.unity.visualscripting from version 1.7.6 to 1.7.8
+
+=== Wed May  3 17:02:23 2023
+
+Packages were changed.
+Update Mode: mergeDefaultDependencies
+
+The following packages were added:
+  com.unity.postprocessing@3.2.2
+
+=== Wed May  3 21:35:53 2023
+
+Packages were changed.
+Update Mode: mergeDefaultDependencies
+
+The following packages were added:
+  com.unity.render-pipelines.universal@7.3.1
+  com.unity.visualeffectgraph@7.3.1
+
+=== Wed May  3 22:18:52 2023
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.collab-proxy from version 1.17.2 to 1.17.7
+  com.unity.ide.rider from version 3.0.15 to 3.0.16
+  com.unity.render-pipelines.universal from version 7.3.1 to 12.1.8
+  com.unity.visualeffectgraph from version 7.3.1 to 12.1.8

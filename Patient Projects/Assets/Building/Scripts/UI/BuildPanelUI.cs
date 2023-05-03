@@ -39,16 +39,16 @@ public class BuildPanelUI : MonoBehaviour
     /*
     public void OnClickBuildingsButton(){}
     */
-    public void OnClickBaseComputerButton()
+    public void OnClickHealthStationButton()
     {
-        CreateButtons(BuildingsType.BaseComputer);
+        CreateButtons(BuildingsType.HealthStation);
     }
     public void OnClickTeslaCoilButton()
     {
         CreateButtons(BuildingsType.TeslaCoil);
     }
-    public void OnClickUpgradeBenchButton()
+    public void OnClickUpgradeAndCraftingBenchButton()
     {
-        CreateButtons(BuildingsType.UpgradeBench);
+        CreateButtons(BuildingsType.UpgradeAndCraftingBench);
     }
 }

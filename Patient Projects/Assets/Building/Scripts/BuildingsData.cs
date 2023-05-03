@@ -18,9 +18,9 @@ public class BuildingsData : ScriptableObject
 
 public enum BuildingsType
 {
-    BaseComputer = 0,
+    HealthStation = 0,
     TeslaCoil = 1,
-    UpgradeBench = 2
+    UpgradeAndCraftingBench = 2
 }
 
 #if UNITY_EDITOR

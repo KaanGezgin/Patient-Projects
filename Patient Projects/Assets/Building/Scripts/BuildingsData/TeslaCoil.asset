@@ -15,6 +15,6 @@ MonoBehaviour:
   DisplayName: TeslaCoil
   color: {r: 0, g: 1, b: 0.26666668, a: 1}
   gridSnapSize: 1
-  buildingPrefab: {fileID: 6387030289145933255, guid: 9e9c8a928e54bba4fbebb96b89b874ae, type: 3}
+  buildingPrefab: {fileID: 4917802008216387502, guid: 9465f1c544a621143b7fc7a6cf408d7a, type: 3}
   BuildingsSize: {x: 1, y: 1, z: 1}
   buildingType: 1
