@@ -337,8 +337,9 @@ GameObject:
   - component: {fileID: 4917802007914078991}
   - component: {fileID: 4917802007914078988}
   - component: {fileID: 4917802007914078989}
+  - component: {fileID: 1835815329}
   m_Layer: 10
-  m_Name: Body
+  m_Name: Tesla Coil Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -423,6 +424,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!135 &1835815329
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4917802007914078995}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 10
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4917802008216129580
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,9 +545,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4917802008216387497}
   - component: {fileID: 4917802008216387496}
+  - component: {fileID: 6233663780829125608}
+  - component: {fileID: 3129174728544045875}
   m_Layer: 10
   m_Name: TeslaCoil
-  m_TagString: Untagged
+  m_TagString: Tesla Coil
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -571,6 +587,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teslaCoilHead: {fileID: 4917802006491187893}
   teslaCoil: {fileID: 4917802008216387502}
+--- !u!54 &6233663780829125608
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4917802008216387502}
+  serializedVersion: 2
+  m_Mass: 30
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 14
+  m_CollisionDetection: 0
+--- !u!65 &3129174728544045875
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4917802008216387502}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.7818673, y: 4.373573, z: 4.1946154}
+  m_Center: {x: 0.12093589, y: 0.15713626, z: -0.051216632}
 --- !u!1 &4917802008408861604
 GameObject:
   m_ObjectHideFlags: 0

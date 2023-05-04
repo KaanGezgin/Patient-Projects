@@ -12,6 +12,7 @@ TagManager:
   - Plane
   - Planet Info
   - Spaceship
+  - Tesla Coil
   layers:
   - Default
   - TransparentFX
