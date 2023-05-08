@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa17e211c97ed594b95b684f8d0fbe7f, type: 3}
+  m_Name: TeslaCoil
+  m_EditorClassIdentifier: 
+  DisplayName: TeslaCoil
+  color: {r: 0, g: 1, b: 0.26666668, a: 1}
+  gridSnapSize: 1
+  buildingPrefab: {fileID: 4917802008216387502, guid: 9465f1c544a621143b7fc7a6cf408d7a, type: 3}
+  BuildingsSize: {x: 1, y: 1, z: 1}
+  buildingType: 1
