@@ -8,7 +8,7 @@ using TMPro;
 public class TeslaCoilUIManager : MonoBehaviour
 {
     [Header("References")]
-    public EnergyStation energyStation;
+    //public EnergyStation energyStation;
 
     [Header("UI")]
     [SerializeField] private Button addFuel;
@@ -19,12 +19,12 @@ public class TeslaCoilUIManager : MonoBehaviour
 
     private void Start()
     {
-        energyStation = GameObject.FindGameObjectWithTag("Tesla Coil").GetComponent<EnergyStation>();
+      //  energyStation = GameObject.FindGameObjectWithTag("Tesla Coil").GetComponent<EnergyStation>();
         fuelUpRate = 20000.0f;
     }
     private void Update()
     {
-        currentFuel = energyStation.currentFuel;
+        //currentFuel = energyStation.currentFuel;
     }
     private void FixedUpdate()
     {
@@ -33,7 +33,7 @@ public class TeslaCoilUIManager : MonoBehaviour
     public void AddFuel()
     {
         currentFuel += fuelUpRate;
-        energyStation.currentFuel = currentFuel;
+        //energyStation.currentFuel = currentFuel;
         //currentEnergy.text = currentFuel.ToString();
     }
 
