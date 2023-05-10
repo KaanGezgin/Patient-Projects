@@ -4,28 +4,31 @@ using UnityEngine;
 
 public class Visor : MonoBehaviour
 {
+    public BuildingsUIManager uiManager;
     public GameObject visor;
     RaycastHit visorRay;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
+            uiManager.CloseAllUIs();
             if (Physics.Raycast(visor.transform.position, visor.transform.TransformDirection(Vector3.forward), out visorRay))
             {
                 
                 if(visorRay.collider.name == "HealthStation")
                 {
-                    Debug.Log("HealthStation");
+                    Debug.Log("ee");
+                    uiManager.OpenBeconUI();
                 }
                 
-                if(visorRay.collider.name == "TeslaCoil")
+                if(visorRay.collider.name == "Energy station")
                 {
-                        Debug.Log("coil");
+                    uiManager.OpenTeslaCoilUI();
                 }
                 
                 if (visorRay.collider.name == "Upgrade and Crafting Bench")
                 {
-                    Debug.Log("upraf");
+                    uiManager.OpenUprafUI();
                 }
 
             }

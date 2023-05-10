@@ -7,5 +7,5 @@ public class TeslaCoil : MonoBehaviour
     [SerializeField] private GameObject teslaCoilHead;
     [SerializeField] private GameObject teslaCoil;
 
-    
+    public float currentFuel;
 }
