@@ -7,4 +7,4 @@ Second Project is  Building: This is for It is a project where I am doing the me
 
 Third Project is TCG Figthing Game: This project is a project that I did with my mentor in my second internship. It is a project where games such as the classic mortal kombat in the game have a design in the form of a dynamic turn-based card game.
 
-Fouth Project is Third Person Contoller: In this project, I tried various game mechanics with a 3rd person camera angle. I tried various game mechanics with a 3rd person camera angle. I'm trying to add side mechanics (hitting, shooting, etc.) day by day, while there are controls in games that include classic 3rd person camera angles (running, walking, sliding, etc.).
+Fourth Project is Third Person Contoller: In this project, I tried various game mechanics with a 3rd person camera angle. I tried various game mechanics with a 3rd person camera angle. I'm trying to add side mechanics (hitting, shooting, etc.) day by day, while there are controls in games that include classic 3rd person camera angles (running, walking, sliding, etc.).
