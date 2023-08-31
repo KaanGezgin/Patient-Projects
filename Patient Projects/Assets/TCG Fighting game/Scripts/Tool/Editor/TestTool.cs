@@ -103,6 +103,8 @@ public class TestTool : EditorWindow
         cardCost = EditorGUILayout.IntField("Card Cost: ", cardCost);
         cardDamage = EditorGUILayout.IntField("Card Damage: ", cardDamage);
         cardDefense = EditorGUILayout.IntField("Card Defense: ", cardDefense);
+
+        /*
         if(GUILayout.Button("Generate Card"))
         {
             if (cardtype == "Heavy Attack")
@@ -135,7 +137,8 @@ public class TestTool : EditorWindow
                 card.CardAttributeChanger(cardCost, cardDamage, cardName, cardtype, cardDefense);
                 Debug.Log("Jab card value is changed");
             }
-        }
+        }*/
+
         cardCurrencey = EditorGUILayout.IntField("Total Card Currency", cardCurrencey);
         if(GUILayout.Button("Change Currency"))
         {

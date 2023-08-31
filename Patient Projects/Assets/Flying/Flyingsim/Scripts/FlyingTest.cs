@@ -13,7 +13,7 @@ public class FlyingTest : MonoBehaviour
     [SerializeField] float maxHealth;
     [SerializeField] float currentHealth;
     [SerializeField] bool deathFlag;
-    /*
+    
     [Header("UI")]
     [SerializeField] Text landingWarning, landingDistanceControl;
     [SerializeField] Text takeoffWarning;
@@ -23,7 +23,7 @@ public class FlyingTest : MonoBehaviour
     [SerializeField] Text speedText;
     [SerializeField] Text healthText;
     [SerializeField] Text fuelText;
-    */
+    
     [Header("Ship Control")]
     [SerializeField] float throttleIncrement = 5f;
     [SerializeField] float maxThrust = 500f;
@@ -75,26 +75,26 @@ public class FlyingTest : MonoBehaviour
         //Cursor lock
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        /*
+        
         forwardWarning.text = "Forward warning = none";
         takeoffWarning.text = "Takeoff warning = none";
         landingWarning.text = "Landing warning = none";
-    */
+    
     }
     private void Update()
     {
       
-        //healthText.text = currentHealth.ToString();
+        healthText.text = currentHealth.ToString();
         if (Physics.Raycast(landingGearTransform.position, landingGearTransform.TransformDirection(Vector3.down), out landLayerControl))
         {
-            //heightText.text = landLayerControl.distance.ToString();
+            heightText.text = landLayerControl.distance.ToString();
             if (landLayerControl.distance <= 20.0f)
             {
-                //landingDistanceControl.text = "Landing zone found";
+                landingDistanceControl.text = "Landing zone found";
             }
             else
             {
-                //landingDistanceControl.text = "Landing zone is not avaliable get close to the landing zone";
+                landingDistanceControl.text = "Landing zone is not avaliable get close to the landing zone";
             }
         }
         landingAndTakeoffControl();
@@ -104,8 +104,8 @@ public class FlyingTest : MonoBehaviour
         Died();
         OutOfFuelCon();
         FillingFuel();
-        //speedText.text = shipBody.velocity.magnitude.ToString();
-        //fuelText.text = currentFuel.ToString();
+        speedText.text = shipBody.velocity.magnitude.ToString();
+        fuelText.text = currentFuel.ToString();
 
         if (deathFlag == false)
         {
@@ -113,22 +113,22 @@ public class FlyingTest : MonoBehaviour
             {
                 if (forwardControl == true && takeoffControl == false && landingControl == false && idleControl == false)
                 {
-                    //modeText.text = "Forward mode";
+                    modeText.text = "Forward mode";
                     ShipMovement();
                 }
                 if (landingControl == true && takeoffControl == false && forwardControl == false && idleControl == false)
                 {
-                    //modeText.text = "Landing mode";
+                    modeText.text = "Landing mode";
                     LandingMovement();
                 }
                 if (takeoffControl == true && landingControl == false && forwardControl == false && idleControl == false)
                 {
-                    //modeText.text = "Takeoff mode";
+                    modeText.text = "Takeoff mode";
                     TakeoffMovement();
                 }
                 if (idleControl == true && takeoffControl == false && forwardControl == false && landingControl == false)
                 {
-                    //modeText.text = "Idle mode";
+                    modeText.text = "Idle mode";
                 }
             }
             else if(isOutOfFuel == true)
@@ -146,7 +146,7 @@ public class FlyingTest : MonoBehaviour
         shipBody.AddTorque(this.transform.right * pitch * responseModifier);
         shipBody.AddTorque(this.transform.forward * -roll * responseModifier);
 
-        if (Input.GetKey(KeyCode.R))//(PlayerInputUtility.GetKey(KeyCode.R, InputStatus.SPACESHIP_CONTROLLER))
+        if (Input.GetKey(KeyCode.R))
         {
             PlanetInfo();
         }
@@ -157,12 +157,12 @@ public class FlyingTest : MonoBehaviour
         pitch = Input.GetAxis("Mouse Pitch");
         yaw = Input.GetAxis("Mouse Yaw");
 
-        if(Input.GetKey(KeyCode.Space))//(PlayerInputUtility.GetKey(KeyCode.Space, InputStatus.SPACESHIP_CONTROLLER))//Speed up
+        if(Input.GetKey(KeyCode.Space))//Speed up
         {
             throttle += throttleIncrement;
             currentFuel = currentFuel - fuelConsumption;
         }
-        else if (Input.GetKey(KeyCode.LeftControl)) //(PlayerInputUtility.GetKey(KeyCode.LeftControl, InputStatus.SPACESHIP_CONTROLLER))////Break
+        else if (Input.GetKey(KeyCode.LeftControl))//Break
         {
             throttle -= throttleIncrement;
             currentFuel = currentFuel - fuelConsumption;
@@ -175,12 +175,12 @@ public class FlyingTest : MonoBehaviour
         {
             if (landLayerControl.distance <= 20.0f)
             {
-                /*
+                
                 landingWarning.text = "Landing Warning: Initiating Landing";
                 forwardWarning.text = "Forward Warning: Forward mode off";
                 takeoffWarning.text = "Takeoff Warning: Takeoff mode off";
                 modeText.text = "Landing mode";
-                */
+                
                 throttle = 0;
                 landingControl = true;
                 takeoffControl = false;
@@ -188,7 +188,7 @@ public class FlyingTest : MonoBehaviour
             }
             else
             {
-                //landingWarning.text = "landing Warning: Landing zone is not avaliable get close to the landing zone";
+                landingWarning.text = "landing Warning: Landing zone is not avaliable get close to the landing zone";
                 Debug.Log("Landing zone is not avaliable");
             }
         }
@@ -197,12 +197,12 @@ public class FlyingTest : MonoBehaviour
     {
         if (idleControl == true && landingControl == false && takeoffControl == false && forwardControl == false)
         {
-            /*
+            
             modeText.text = "Takeoff mode";
             landingWarning.text = "Landing Warning: Landing mode off";
             forwardWarning.text = "Forward Warning: Forward mode off";
             takeoffWarning.text = "Takeoff Warning: Initiating take off";
-            */
+            
             takeoffControl = true;
             landingControl = false;
             forwardControl = false;
@@ -214,7 +214,7 @@ public class FlyingTest : MonoBehaviour
     {
         if (landLayerControl.distance <= 0.05f)
         {
-            //modeText.text = "Idle mode";
+            modeText.text = "Idle mode";
             forwardControl = false;
             landingControl = false;
             idleControl = true;
@@ -224,8 +224,8 @@ public class FlyingTest : MonoBehaviour
     {
         if (forwardControl == false && (landingControl == true || takeoffControl == true))
         {
-            //modeText.text = "Forward mode";
-            //forwardWarning.text = "Forward Warning: Forward mode on";
+            modeText.text = "Forward mode";
+            forwardWarning.text = "Forward Warning: Forward mode on";
             takeoffControl = false;
             landingControl = false;
             idleControl = false;
@@ -235,15 +235,15 @@ public class FlyingTest : MonoBehaviour
     }
     void landingAndTakeoffControl()
     {
-        if (Input.GetKey(KeyCode.L)) //(PlayerInputUtility.GetKey(KeyCode.L, InputStatus.SPACESHIP_CONTROLLER))
+        if (Input.GetKey(KeyCode.L))
         {
             Landing();
         }
-        if (Input.GetKey(KeyCode.T)) //(PlayerInputUtility.GetKey(KeyCode.T, InputStatus.SPACESHIP_CONTROLLER))
+        if (Input.GetKey(KeyCode.T))
         {
             Takeoff();
         }
-        if (Input.GetKey(KeyCode.F))//(PlayerInputUtility.GetKey(KeyCode.F, InputStatus.SPACESHIP_CONTROLLER))
+        if (Input.GetKey(KeyCode.F))
         {
             if (landLayerControl.distance > 10.0f)
             {
@@ -251,7 +251,7 @@ public class FlyingTest : MonoBehaviour
             }
             else
             {
-                //forwardWarning.text = "Forward Warning: Rise to safe distance";
+                forwardWarning.text = "Forward Warning: Rise to safe distance";
             }
         }
         if (landLayerControl.distance < 0.05f && landingControl == true)
@@ -264,7 +264,7 @@ public class FlyingTest : MonoBehaviour
         //Vector3 movement;
         float landingSpeed = 10.0f;
 
-        if (Input.GetKey(KeyCode.S)) //(PlayerInputUtility.GetKey(KeyCode.S, InputStatus.SPACESHIP_CONTROLLER))
+        if (Input.GetKey(KeyCode.S))
         {
             currentFuel = currentFuel - fuelConsumption;
             //movement = new Vector3(0, Input.GetAxis("Vertical"), 0);
@@ -279,7 +279,7 @@ public class FlyingTest : MonoBehaviour
 
         float takeoffSpeed = 20.0f;
 
-        if(Input.GetKey(KeyCode.W)) //(PlayerInputUtility.GetKey(KeyCode.W, InputStatus.SPACESHIP_CONTROLLER))
+        if(Input.GetKey(KeyCode.W))
         {
             currentFuel = currentFuel - fuelConsumption;
             //movement = new Vector3(0, Input.GetAxis("Vertical"), 0);
