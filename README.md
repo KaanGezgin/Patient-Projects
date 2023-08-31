@@ -1,5 +1,5 @@
 # Patient-Projects
-The main purpose of this project is to compile my previous projects that have progressed to a certain extent. And it can give me an idea for the game I'm currently designing.
+The main purpose of this project is to compile my previous projects that have progressed to a certain extent. And it can give me an idea for the game I'm currently designing. IF you want specificly one of this projects go to my repository page and look for project.
 
 First project is Flight Simulation: There's not much to explain in this project, the name says it all :)
 
